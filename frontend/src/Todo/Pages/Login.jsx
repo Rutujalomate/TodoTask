@@ -13,14 +13,12 @@ import {
   Checkbox,
   useColorMode,
   useColorModeValue,
-  Divider,
-  Stack,
 } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Login = ({ isAuthenticated, setIsAuthenticated }) => {
+const Login = ({ setIsAuthenticated }) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -60,7 +58,7 @@ const Login = ({ isAuthenticated, setIsAuthenticated }) => {
     setLoading(true);
 
     try {
-      const res = await axios.post('https://todolist-1-b67m.onrender.com/api/user/login', {
+      const res = await axios.post('http://localhost:8080/api/auth/login', {
         userEmail,
         userPassword,
       });
@@ -169,7 +167,6 @@ const Login = ({ isAuthenticated, setIsAuthenticated }) => {
           >
             {loading ? 'Logging in...' : 'Login'}
           </Button>
-
 
           <Text textAlign="center" fontSize="sm" mt={2}>
             Don’t have an account?{' '}

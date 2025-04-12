@@ -35,7 +35,7 @@ const Task = () => {
   const fetchTasks = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('https://todolist-1-b67m.onrender.com/api/task', {
+      const response = await axios.get('http://localhost:8080/api/tasks', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,7 +62,7 @@ const Task = () => {
     setLoading(true);
     try {
       await axios.post(
-        'https://todolist-1-b67m.onrender.com/api/task',
+        'http://localhost:8080/api/tasks',
         { title, description },
         {
           headers: {
@@ -97,7 +97,7 @@ const Task = () => {
     setLoading(true);
     try {
       await axios.put(
-        `https://todolist-1-b67m.onrender.com/api/task/${editingTask._id}`,
+        `http://localhost:8080/api/tasks/${editingTask._id}`,
         { title, description },
         {
           headers: {
@@ -130,7 +130,7 @@ const Task = () => {
   const handleDeleteTask = async (taskId) => {
     setLoading(true);
     try {
-      await axios.delete(`https://todolist-1-b67m.onrender.com/api/task/${taskId}`, {
+      await axios.delete(`http://localhost:8080/api/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

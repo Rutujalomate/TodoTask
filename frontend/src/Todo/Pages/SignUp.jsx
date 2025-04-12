@@ -18,14 +18,19 @@ const SignUp = () => {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const toast = useToast();
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailRegex.test(userEmail);
+  const doPasswordsMatch = userPassword === confirmPassword;
+
   const handleButtonClick = async () => {
-    if (!userName || !userEmail || !userPassword) {
+    if (!userName || !userEmail || !userPassword || !confirmPassword) {
       toast({
         title: 'All fields are required',
         status: 'warning',
@@ -35,10 +40,32 @@ const SignUp = () => {
       return;
     }
 
+    if (!isEmailValid) {
+      toast({
+        title: 'Invalid Email',
+        description: 'Please enter a valid email address',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (!doPasswordsMatch) {
+      toast({
+        title: 'Password Mismatch',
+        description: 'Passwords do not match',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await axios.post('https://todolist-1-b67m.onrender.com/api/user', {
+      const res = await axios.post('http://localhost:8080/api/auth/register', {
         userName,
         userEmail,
         userPassword,
@@ -56,7 +83,7 @@ const SignUp = () => {
         navigate('/');
       }
     } catch (error) {
-      if (error?.response?.data?.message === 'user with Email id already exist') {
+      if (error?.response?.data?.message === 'User already exists') {
         toast({
           title: 'Signup failed',
           description: 'User with this email already exists',
@@ -102,13 +129,16 @@ const SignUp = () => {
             />
           </FormControl>
 
-          <FormControl isInvalid={!userEmail && userEmail !== ''}>
+          <FormControl isInvalid={userEmail !== '' && !isEmailValid}>
             <Input
               placeholder="Enter Email"
               type="email"
               value={userEmail}
               onChange={(e) => setUserEmail(e.target.value)}
             />
+            {!isEmailValid && userEmail !== '' && (
+              <FormErrorMessage>Invalid email format</FormErrorMessage>
+            )}
           </FormControl>
 
           <FormControl isInvalid={!userPassword && userPassword !== ''}>
@@ -129,6 +159,29 @@ const SignUp = () => {
                 </Button>
               </InputRightElement>
             </InputGroup>
+          </FormControl>
+
+          <FormControl isInvalid={confirmPassword !== '' && !doPasswordsMatch}>
+            <InputGroup>
+              <Input
+                placeholder="Confirm Password"
+                type={showPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <InputRightElement width="4.5rem">
+                <Button
+                  h="1.75rem"
+                  size="sm"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            {!doPasswordsMatch && confirmPassword !== '' && (
+              <FormErrorMessage>Passwords do not match</FormErrorMessage>
+            )}
           </FormControl>
 
           <Button
